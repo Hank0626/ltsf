@@ -34,7 +34,7 @@ Here is an example of how you can use LTSF:
 import ltsf
 
 # Create a configuration for your desired model and dataset
-config = ltsf.Config("Nonstationary_Transformer", "ETTh1") 
+config = ltsf.Config("Autoformer", "ETTh1") 
 
 # Set your custom configuration
 config.set_config({"use_gpu":False})
