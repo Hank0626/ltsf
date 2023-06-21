@@ -63,6 +63,7 @@ trainer.test(test_loader, res_dir="./result")
 
 ## 📈 Future Work
 - Planning to support more intelligent parameter settings for improved usability and flexibility.
+- Support custom dataset.
 
 ## 🙏 Acknowledgments
 We are grateful to the authors of all the papers and their original implementations that made this package possible.
