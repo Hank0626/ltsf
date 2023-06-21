@@ -31,6 +31,10 @@ The table below shows the supported baselines with their corresponding reference
 ## 📚 Usage
 
 Here is an example of how you can use LTSF:
+```
+pip install lsf
+```
+
 ```python
 import ltsf
 
