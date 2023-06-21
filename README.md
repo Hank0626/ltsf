@@ -1,11 +1,11 @@
+# 🚀 LTSF: A Baseline Aggregator for Long-Term Time-Series Forecasting 
 [![PyPI version](https://badge.fury.io/py/ltsf.svg)](https://badge.fury.io/py/ltsf)
-# LTSF: A Baseline Aggregator for Long-Term Time-Series Forecasting
 
-LTSF is a Python package that simplifies the process of implementing and testing various state-of-the-art models for long-term time-series forecasting. This package supports the majority of current leading baselines, offering a user-friendly interface to perform LTSF tasks effortlessly.
+LTSF is a Python 🐍 package that simplifies the process of implementing and testing various state-of-the-art models 🧠 for long-term time-series forecasting 📈. This package supports the majority of current leading baselines, offering a user-friendly interface to perform LTSF tasks effortlessly.
 
-LTSF enables users to employ their desired model with a single-line configuration and provides the tools to create training, validation, and testing datasets effortlessly. By further utilizing LTSF's training interface, users can train and test their models using only a few lines of code.
+LTSF enables users to employ their desired model with a single-line configuration and provides the tools 🛠️ to create training, validation, and testing datasets effortlessly. By further utilizing LTSF's training interface, users can train and test their models using only a few lines of code.
 
-## Supported Baselines
+## 🔧 Supported Baselines
 
 The table below shows the supported baselines with their corresponding references and links to their original implementation:
 
@@ -27,10 +27,10 @@ The table below shows the supported baselines with their corresponding reference
 | Reformer | [ICLR 2020](https://openreview.net/forum?id=rkgNKkHtvB) | [Reformer](https://github.com/lucidrains/reformer-pytorch) |
 | Transformer | [NeurIPS 2017](https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf) | [Transformer](https://github.com/hyunwoongko/transformer) |
 
-## Usage
+
+## 📚 Usage
 
 Here is an example of how you can use LTSF:
-
 ```python
 import ltsf
 
@@ -53,13 +53,21 @@ trainer.train(train_loader, val_loader, test_loader)
 trainer.test(test_loader, res_dir="./result")
 ```
 
-## Key Features
+## ⭐ Key Features
 
 - Supports 15 leading baselines for long-term time-series forecasting.
 - User-friendly, enabling model training and testing with minimal lines of code.
 
-## Acknowledgments
+## 🎉 Update Notes
+- [2023-06-21] LTSF has now been released! 🚀
+
+## 📈 Future Work
+- Planning to support more intelligent parameter settings for improved usability and flexibility.
+
+## 🙏 Acknowledgments
 We are grateful to the authors of all the papers and their original implementations that made this package possible.
 
-## License
+## 📜 License
 [Apache License](LICENSE).
+
+I hope you find this revision helpful. Let me know if there are any other changes you'd like to make.
