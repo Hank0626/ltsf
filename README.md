@@ -70,5 +70,3 @@ We are grateful to the authors of all the papers and their original implementati
 
 ## 📜 License
 [Apache License](LICENSE).
-
-I hope you find this revision helpful. Let me know if there are any other changes you'd like to make.
