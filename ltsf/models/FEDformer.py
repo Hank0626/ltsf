@@ -7,15 +7,9 @@ from ..layers import AutoDecoder as Decoder
 from ..layers import AutoDecoderLayer as DecoderLayer
 from ..layers import AutoEncoder as Encoder
 from ..layers import AutoEncoderLayer as EncoderLayer
-from ..layers import (
-    DataEmbedding,
-    FourierBlock,
-    FourierCrossAttention,
-    MultiWaveletCross,
-    MultiWaveletTransform,
-    my_Layernorm,
-    series_decomp,
-)
+from ..layers import (DataEmbedding, FourierBlock, FourierCrossAttention,
+                      MultiWaveletCross, MultiWaveletTransform, my_Layernorm,
+                      series_decomp)
 
 
 class Model(nn.Module):
@@ -200,19 +194,5 @@ class Model(nn.Module):
         return output
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
-        if (
-            self.task_name == "long_term_forecast"
-            or self.task_name == "short_term_forecast"
-        ):
-            dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-            return dec_out[:, -self.pred_len :, :]  # [B, L, D]
-        if self.task_name == "imputation":
-            dec_out = self.imputation(x_enc, x_mark_enc, x_dec, x_mark_dec, mask)
-            return dec_out  # [B, L, D]
-        if self.task_name == "anomaly_detection":
-            dec_out = self.anomaly_detection(x_enc)
-            return dec_out  # [B, L, D]
-        if self.task_name == "classification":
-            dec_out = self.classification(x_enc, x_mark_enc)
-            return dec_out  # [B, N]
-        return None
+        dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+        return dec_out[:, -self.pred_len :, :]  # [B, L, D]

@@ -7,40 +7,44 @@ import torch
 import torch.nn as nn
 from torch import optim
 
-from ..models import (
-    Autoformer,
-    Crossformer,
-    DLinear,
-    ETSformer,
-    FEDformer,
-    FiLM,
-    Informer,
-    LightTS,
-    MICN,
-    Nonstationary_Transformer,
-    PatchTST,
-    Pyraformer,
-    Reformer,
-    TimesNet,
-    Transformer,
-)
-
+from ..models import (MICN, Autoformer, Crossformer, DLinear, ETSformer,
+                      FEDformer, FiLM, Informer, LightTS,
+                      Nonstationary_Transformer, PatchTST, Pyraformer,
+                      Reformer, TimesNet, Transformer)
 from ..utils import EarlyStopping, adjust_learning_rate, metric, visual
 
 
 class LTSFTrainer:
-    def __init__(self, config) -> None:
-        self.config = config
+    """
+    A trainer class for various time-series forecasting models. This class encompasses functionality
+    for configuring, building, training, validating, testing models, and saving results.
+
+    Attributes:
+        config (dict): Configuration parameters for the model and training process.
+        setting (str): Specifies a configuration setting.
+        device (torch.device): Device to which tensors can be sent.
+        model (torch.nn.Module): The instantiated model based on config parameters.
+    """
+
+    def __init__(self, config: object) -> None:
+        """
+        Initialize the trainer with a configuration object.
+
+        Args:
+            config (object): Contains configuration parameters as attributes.
+        """
+        self.config = config.config_dict
+        self.setting = config.get_setting
         self.device = self._acquire_device()
         self.model = self._build_model().to(self.device)
 
-    def set_config(self, config: dict) -> None:
-        for key in config.keys():
-            if key not in self.config:
-                raise KeyError(f"Key '{key}' not found in config.")
-            self.config[key] = config[key]
-
     def _acquire_device(self):
+        """
+        Get the compute device (CPU or GPU) based on the config parameters.
+
+        Returns:
+            torch.device: Device object representing the device to use.
+        """
         if self.config["use_gpu"]:
             os.environ["CUDA_VISIBLE_DEVICES"] = (
                 str(self.config["use_gpu"])
@@ -48,16 +52,20 @@ class LTSFTrainer:
                 else self.config["devices"]
             )
             device = torch.device(f'cuda:{self.config["gpu"]}')
-            print(f'Use GPU: cuda:{self.config["gpu"]}')
         else:
             device = torch.device("cpu")
-            print("Use CPU")
         return device
 
     def _build_model(self):
+        """
+        Construct the model as specified in the config parameters.
+
+        Returns:
+            torch.nn.Module: The constructed model.
+        """
         model_dict = {
             "Autoformer": Autoformer,
-            "Crossformer" : Crossformer,
+            "Crossformer": Crossformer,
             "DLinear": DLinear,
             "ETSformer": ETSformer,
             "FEDformer": FEDformer,
@@ -82,16 +90,38 @@ class LTSFTrainer:
         return model
 
     def _select_optimizer(self):
+        """
+        Select the optimizer for the model.
+
+        Returns:
+            torch.optim.Optimizer: The chosen optimizer.
+        """
         model_optim = optim.Adam(
             self.model.parameters(), lr=self.config["learning_rate"]
         )
         return model_optim
 
     def _select_criterion(self):
+        """
+        Select the criterion (loss function) for the model.
+
+        Returns:
+            torch.nn.modules.loss._Loss: The chosen loss function.
+        """
         criterion = nn.MSELoss()
         return criterion
 
     def vali(self, vali_loader, criterion):
+        """
+        Validate the model with a given data loader and loss function.
+
+        Args:
+            vali_loader (torch.utils.data.DataLoader): DataLoader object containing validation data.
+            criterion (torch.nn.modules.loss._Loss): The loss function.
+
+        Returns:
+            float: The average validation loss.
+        """
         total_loss = []
         self.model.eval()
         with torch.no_grad():
@@ -150,7 +180,21 @@ class LTSFTrainer:
         return total_loss
 
     def train(self, train_loader, vali_loader, test_loader):
-        path = os.path.join(self.config["checkpoints"])
+        """
+        Train the model with given training, validation, and test data loaders.
+
+        Args:
+            train_loader (torch.utils.data.DataLoader): DataLoader object containing training data.
+            vali_loader (torch.utils.data.DataLoader): DataLoader object containing validation data.
+            test_loader (torch.utils.data.DataLoader): DataLoader object containing test data.
+        """
+        print("\033[34m" + "Start training..." + "\033[0m")
+        if self.config["use_gpu"]:
+            print("Use GPU: {}".format(self.config["gpu"]))
+        else:
+            print("Use CPU")
+
+        path = os.path.join(self.config["checkpoints"], self.setting)
         os.makedirs(path, exist_ok=True)
 
         time_now = time.time()
@@ -259,17 +303,23 @@ class LTSFTrainer:
 
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(train_loss)
+            print("\033[34m" + "Start validation..." + "\033[0m")
+            val_time = time.time()
             vali_loss = self.vali(vali_loader, criterion)
+            print(f"Validation cost time: {time.time() - val_time:.2f}s")
+            print("\033[34m" + "Start testing..." + "\033[0m")
             test_loss = self.vali(test_loader, criterion)
+            print(f"Testing cost time: {time.time() - val_time:.2f}s")
 
             print(
-                "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} Test Loss: {4:.7f}".format(
-                    epoch + 1, train_steps, train_loss, vali_loss, test_loss
-                )
+                "\033[35m"
+                + f"\nEpoch: {epoch + 1}, Steps: {train_steps} | Train Loss: {train_loss:.7f} Vali Loss: {vali_loss:.7f} Test Loss: {test_loss:.7f}\n"
+                + "\033[0m"
             )
+
             early_stopping(vali_loss, self.model, path)
             if early_stopping.early_stop:
-                print("Early stopping")
+                print("\033[31m" + "Early stopping" + "\033[0m")
                 break
 
             adjust_learning_rate(
@@ -279,17 +329,22 @@ class LTSFTrainer:
         best_model_path = path + "/" + "checkpoint.pth"
         self.model.load_state_dict(torch.load(best_model_path))
 
-    def test(self, setting, test=0):
-        test_loader = None
-        if test:
-            print("loading model")
-            self.model.load_state_dict(
-                torch.load(os.path.join("./checkpoints/" + setting, "checkpoint.pth"))
-            )
+    def test(self, test_loader, res_dir: str = "./results/"):
+        """
+        Test the model with a given data loader and save the results.
+
+        Args:
+            test_loader (torch.utils.data.DataLoader): DataLoader object containing test data.
+            res_dir (str, optional): The directory where results will be saved. Defaults to './results/'.
+        """
+        print("\033[34m" + "Loading model..." + "\033[0m")
+        self.model.load_state_dict(
+            torch.load(os.path.join("./checkpoints/" + self.setting, "checkpoint.pth"))
+        )
 
         preds = []
         trues = []
-        folder_path = "./test_results/" + setting + "/"
+        folder_path = os.path.join(res_dir, "vis_results", self.setting)
 
         os.makedirs(folder_path, exist_ok=True)
 
@@ -363,21 +418,24 @@ class LTSFTrainer:
         print("test shape:", preds.shape, trues.shape)
 
         # result save
-        folder_path = "./results/" + setting + "/"
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
+        folder_path = os.path.join(res_dir, "npy_results", self.setting)
+
+        os.makedirs(folder_path, exist_ok=True)
 
         mae, mse, rmse, mape, mspe = metric(preds, trues)
         print("mse:{}, mae:{}".format(mse, mae))
-        f = open("result.txt", "a")
-        f.write(setting + "  \n")
+        f = open(os.path.join(res_dir, "result.txt"), "a")
+        f.write(self.setting + "  \n")
         f.write("mse:{}, mae:{}".format(mse, mae))
         f.write("\n")
         f.write("\n")
         f.close()
 
-        np.save(folder_path + "metrics.npy", np.array([mae, mse, rmse, mape, mspe]))
-        np.save(folder_path + "pred.npy", preds)
-        np.save(folder_path + "true.npy", trues)
+        np.save(
+            os.path.join(folder_path, "metrics.npy"),
+            np.array([mae, mse, rmse, mape, mspe]),
+        )
+        np.save(os.path.join(folder_path, "pred.npy"), preds)
+        np.save(os.path.join(folder_path, "true.npy"), trues)
 
         return

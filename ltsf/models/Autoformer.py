@@ -5,13 +5,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..layers import AutoCorrelation
-from ..layers import AutoCorrelationLayer
+from ..layers import AutoCorrelation, AutoCorrelationLayer
 from ..layers import AutoDecoder as Decoder
 from ..layers import AutoDecoderLayer as DecoderLayer
 from ..layers import AutoEncoder as Encoder
 from ..layers import AutoEncoderLayer as EncoderLayer
-from ..layers import DataEmbedding, DataEmbedding_wo_pos, my_Layernorm, series_decomp
+from ..layers import (DataEmbedding, DataEmbedding_wo_pos, my_Layernorm,
+                      series_decomp)
 
 
 class Model(nn.Module):

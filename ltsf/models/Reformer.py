@@ -3,15 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..layers import (
-    ConvLayer,
-    DataEmbedding,
-    Decoder,
-    DecoderLayer,
-    Encoder,
-    EncoderLayer,
-    ReformerLayer,
-)
+from ..layers import (ConvLayer, DataEmbedding, Decoder, DecoderLayer, Encoder,
+                      EncoderLayer, ReformerLayer)
 
 
 class Model(nn.Module):

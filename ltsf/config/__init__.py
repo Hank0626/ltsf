@@ -1,3 +1,1 @@
-from .load import load_yaml
-
-AutoFormer = load_yaml("AutoFormer")
+from .config import Config

@@ -3,17 +3,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..layers import (
-    AttentionLayer,
-    ConvLayer,
-    DataEmbedding,
-    Decoder,
-    DecoderLayer,
-    Encoder,
-    EncoderLayer,
-    FullAttention,
-    ProbAttention,
-)
+from ..layers import (AttentionLayer, ConvLayer, DataEmbedding, Decoder,
+                      DecoderLayer, Encoder, EncoderLayer, FullAttention,
+                      ProbAttention)
 from ..utils import ProbMask, TriangularCausalMask
 
 

@@ -3,9 +3,10 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn.modules.linear import Linear
+
 from .Embed import DataEmbedding
 from .SelfAttention_Family import AttentionLayer, FullAttention
-from torch.nn.modules.linear import Linear
 
 
 def get_mask(input_size, window_size, inner_size):

@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from einops import rearrange, repeat
 from reformer_pytorch import LSHSelfAttention
+
 from ..utils.masking import ProbMask, TriangularCausalMask
 
 
