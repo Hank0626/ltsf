@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/ltsf.svg)](https://badge.fury.io/py/ltsf)
 # LTSF: A Baseline Aggregator for Long-Term Time-Series Forecasting
 
 LTSF is a Python package that simplifies the process of implementing and testing various state-of-the-art models for long-term time-series forecasting. This package supports the majority of current leading baselines, offering a user-friendly interface to perform LTSF tasks effortlessly.
